@@ -1,22 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"github.com/chossypratama/microservice-golang.git/controllers/productcontroller"
+	"github.com/chossypratama/microservice-golang.git/models"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	server := &http.Server{
-		Addr:    ":3000",
-		Handler: http.HandlerFunc(basicHandler),
-	}
+	r := gin.Default()
+	models.ConnectDatabase()
 
-	err := server.ListenAndServe()
-	if err != nil {
-		fmt.Println("failed to listen to server", err)
-	}
-}
+	r.GET("/api/products", productcontroller.Index)
+	r.GET("/api/products/:id", productcontroller.Show)
+	r.POST("/api/products", productcontroller.Create)
+	r.PUT("/api/products/:id", productcontroller.Update)
+	r.DELETE("/api/products", productcontroller.Delete)
 
-func basicHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
+	r.Run()
 }
